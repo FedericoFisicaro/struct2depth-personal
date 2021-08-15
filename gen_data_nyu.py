@@ -15,21 +15,17 @@ from alignment import align
 def run_all():
     WIDTH = 416
     HEIGHT = 128
-    DATASET_DIR = "/home/FisicaroF/UmonsIndoorDataset/dataset/"
-    INPUT_DIR = '/home/FisicaroF/UmonsIndoorDataset/splits/'
-    OUTPUT_DIR = '/home/FisicaroF/5/struct2depth/UMONS_Processed/'
-    SPLIT ="train"
-    DATA_SPLITS = ["ALL","H1","H2","H3","H1-H2","H1-H3","H2-H3"]
+    DATASET_DIR = "/home/FisicaroF/2/dataset/nyu_depth_v2/sync/"
+    INPUT_FILE = '/home/FisicaroF/2/bts/train_test_inputs/nyudepthv2_train_files_with_gt.txt'
+    OUTPUT_DIR = '/home/FisicaroF/5/struct2depth/NYU_Processed/'
     old_seqname = ""
     ct = 1
-    data_lists = []
-    processed_files_lists = []
 
-    for data_split in DATA_SPLITS:
-        f = open(INPUT_DIR + data_split + "/" + SPLIT + "_files.txt", "r")
-        lines = sorted(f.read().splitlines())
-        f.close()
-        data_lists.append(lines)
+
+    f = open(INPUT_FILE)
+    lines = sorted(f.read().splitlines())
+    f.close()
+    
 
     if not OUTPUT_DIR.endswith('/'):
         OUTPUT_DIR = OUTPUT_DIR + '/'
@@ -37,45 +33,27 @@ def run_all():
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
-    if not os.path.exists(OUTPUT_DIR + "splits2"):
-        os.mkdir(OUTPUT_DIR + "splits2")
-
-    for data_split in DATA_SPLITS:
-
-        processed_files_lists.append(open(OUTPUT_DIR + "splits2/" + data_split + "_" + SPLIT + '.txt', 'w'))
+    processed_files_list = open(OUTPUT_DIR + "splits2/" + data_split + "_" + SPLIT + '.txt', 'w')
 
 
-    for sequence_path in sorted(glob.glob(DATASET_DIR + "*/*/*/*/")):
+    for sequence_path in sorted(glob.glob(DATASET_DIR + "*/")):
 
-        building = sequence_path.split('/')[-5]
-        height = sequence_path.split('/')[-4]
-        room = sequence_path.split('/')[-3]
-        data_split = sequence_path.split('/')[-2][4:]
-
-        seqname = building + "_" + height + "_" + room
-        if len(data_split) > 0 : 
-            seqname = seqname + "_" + data_split
+        seqname = sequence_path.split('/')[-2]
 
         print('Processing sequence', seqname)
         ct = 1
         if not os.path.exists(OUTPUT_DIR + seqname):
             os.mkdir(OUTPUT_DIR + seqname)
 
-        cameraParamsFile = open(os.path.join(os.path.dirname(sequence_path[0:-2]), "camera_params" + data_split + '.txt'),"r")
-        cameraParamsLines = cameraParamsFile.readlines()
-        cameraParamsFile.close()
-        cameraParamsLines = [cameraParamsLines.rstrip() for cameraParamsLines in cameraParamsLines]
-        fx = float(cameraParamsLines[1].split(":")[-1])
-        fy = float(cameraParamsLines[2].split(":")[-1])
-        cx = float(cameraParamsLines[3].split(":")[-1])
-        cy = float(cameraParamsLines[4].split(":")[-1])
+        fx = float(518.8579)
+        fy = float(518.8579)
+        cx = float(320)
+        cy = float(240)
 
-        for frame_path in sorted(glob.glob(sequence_path + "left*.png")):
-            if "depth" in frame_path:
-                continue
+        for frame_path in sorted(glob.glob(sequence_path + "rgb_*.jpg")):
             
             # print(frame_path)
-            frame_nbr = int(frame_path[-10:-4])
+            frame_nbr = int(frame_path[-9:-4])
 
             imgnum = str(ct).zfill(10)
             # print(imgnum)
@@ -86,8 +64,8 @@ def run_all():
         
             # big_img = np.zeros(shape=(HEIGHT, WIDTH*3, 3))  
         
-            frame_past_path = os.path.dirname(frame_path) + "/left" + str(frame_nbr -1).zfill(6) + ".png"
-            frame_future_path = os.path.dirname(frame_path) + "/left" + str(frame_nbr +1).zfill(6) + ".png"
+            frame_past_path = os.path.dirname(frame_path) + "/rgb_" + str(frame_nbr -1).zfill(5) + ".jpg"
+            frame_future_path = os.path.dirname(frame_path) + "/rgb_" + str(frame_nbr +1).zfill(5) + ".jpg"
 
             if os.path.isfile(frame_past_path) and os.path.isfile(frame_future_path):
 
@@ -123,16 +101,12 @@ def run_all():
                 ct+=1
 
 
-                for i,data_list in enumerate(data_lists):
-                    if len(data_list) == 0:
-                        continue
-                    if data_list[0].split()[0] in frame_path:
-                        processed_files_lists[i].write(seqname + " " + imgnum + "\n")
-                        del data_list[0]
+                if lines[0].split()[0] in frame_path:
+                    processed_files_list.write(seqname + " " + imgnum + "\n")
+                    del lines[0]
 
     
-    for file_list in processed_files_lists:
-        file_list.close()
+    processed_files_list.close()
                     
           
                 

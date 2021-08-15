@@ -150,6 +150,7 @@ def _run_inference(output_dir=None,
                    use_masks=False,
                    dataset_dir = None):
   """Runs inference. Refer to flags in inference.py for details."""
+  est_depth_tot =[]
   inference_model = model.Model(is_training=False,
                                 batch_size=batch_size,
                                 img_height=img_height,
@@ -227,8 +228,15 @@ def _run_inference(output_dir=None,
                 output_dirs[k], filename_root + pref + '.png')
             with gfile.Open(output_raw, 'wb') as f:
               np.save(f, est_depth[j])
+            est_depth_tot.append(est_depth[j])
             util.save_image(output_vis, visualization, file_extension)
           im_batch = []
+
+      filename_root = os.path.splitext(os.path.basename(im_files[k]))[0]
+      output_raw = os.path.join(output_dir, 'depth_preds.npy')
+      with gfile.Open(output_raw, 'wb') as f:
+        np.save(f, np.concatenate(est_depth_tot))
+
 
     # Run egomotion network.
     if egomotion:
