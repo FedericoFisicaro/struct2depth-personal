@@ -16,7 +16,7 @@ def run_all():
     WIDTH = 416
     HEIGHT = 128
     DATASET_DIR = "/home/FisicaroF/2/dataset/nyu_depth_v2/sync/"
-    INPUT_FILE = '/home/FisicaroF/2/bts/train_test_inputs/nyudepthv2_train_files_with_gt.txt'
+    INPUT_FILE = '/home/FisicaroF/3/DNet/splits/nyu_Depth/train_files.txt'
     OUTPUT_DIR = '/home/FisicaroF/5/struct2depth/NYU_Processed/'
     old_seqname = ""
     ct = 1
@@ -26,6 +26,7 @@ def run_all():
     lines = sorted(f.read().splitlines())
     f.close()
     
+    # print("QUAAAAAAAAAAAAA",lines[0])
 
     if not OUTPUT_DIR.endswith('/'):
         OUTPUT_DIR = OUTPUT_DIR + '/'
@@ -33,7 +34,7 @@ def run_all():
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
-    processed_files_list = open(OUTPUT_DIR + "splits2/" + data_split + "_" + SPLIT + '.txt', 'w')
+    processed_files_list = open(OUTPUT_DIR + 'train.txt', 'w')
 
 
     for sequence_path in sorted(glob.glob(DATASET_DIR + "*/")):
@@ -51,18 +52,18 @@ def run_all():
         cy = float(240)
 
         for frame_path in sorted(glob.glob(sequence_path + "rgb_*.jpg")):
-            
-            # print(frame_path)
+
             frame_nbr = int(frame_path[-9:-4])
 
             imgnum = str(ct).zfill(10)
             # print(imgnum)
 
-            # if os.path.exists(OUTPUT_DIR + seqname + '/' + imgnum + '.png'):
-            #     ct+=1
-            #     continue
+            if os.path.exists(OUTPUT_DIR + seqname + '/' + imgnum + '.png'):
+                print("QUAA????")
+                ct+=1
+                continue
         
-            # big_img = np.zeros(shape=(HEIGHT, WIDTH*3, 3))  
+            big_img = np.zeros(shape=(HEIGHT, WIDTH*3, 3))  
         
             frame_past_path = os.path.dirname(frame_path) + "/rgb_" + str(frame_nbr -1).zfill(5) + ".jpg"
             frame_future_path = os.path.dirname(frame_path) + "/rgb_" + str(frame_nbr +1).zfill(5) + ".jpg"

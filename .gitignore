@@ -1,5 +1,6 @@
 CITYSCAPES_Processed/*
 KITTI_Processed/*
+NYU_Processed/*
 UMONS_Processed/*
 models/*
 resnet_pretrained/*

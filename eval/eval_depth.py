@@ -20,7 +20,6 @@ def main():
     pred_depths = np.load(args.pred_file)
     
     
-    
     test_files = read_text_lines(args.test_file_list)
     gt_files, gt_calib, im_sizes, im_files, cams = \
         read_file_data(args.dataset, test_files, args.dataset_dir)
@@ -42,7 +41,6 @@ def main():
 
         gt_depths.append(depth.astype(np.float32))
     pred_depths = pred_depths_resized
-
     rms     = np.zeros(num_test, np.float32)
     log_rms = np.zeros(num_test, np.float32)
     abs_rel = np.zeros(num_test, np.float32)
@@ -51,9 +49,13 @@ def main():
     a1      = np.zeros(num_test, np.float32)
     a2      = np.zeros(num_test, np.float32)
     a3      = np.zeros(num_test, np.float32)
-    for i in range(num_test):    
+    for i in range(num_test):   
+         
         gt_depth = gt_depths[i]
         pred_depth = np.copy(pred_depths[i])
+
+        if np.shape(pred_depth) != np.shape(gt_depth):
+            pred_depth = np.repeat(pred_depth[:, :, None], repeats=3, axis=2)
 
         mask = np.logical_and(gt_depth > args.min_depth, 
                               gt_depth < args.max_depth)

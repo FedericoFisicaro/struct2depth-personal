@@ -44,6 +44,8 @@ import tensorflow as tf
 import nets
 import util
 
+from collections import Counter
+
 gfile = tf.gfile
 
 # CMAP = 'plasma'
@@ -208,6 +210,18 @@ def _run_inference(output_dir=None,
                                      dtype=np.float32))
           im_batch = np.stack(im_batch, axis=0)
           est_depth = inference_model.inference_depth(im_batch, sess)
+          # print("-----------------------\n-----------------------\n-----------------------\n-----------------------\n")
+          # print('0')
+          # print(Counter(est_depth[0].flatten()))
+          # print("-----------------------\n-----------------------\n-----------------------\n-----------------------\n")
+          # print('1')
+          # print(Counter(est_depth[1].flatten()))
+          # print("-----------------------\n-----------------------\n-----------------------\n-----------------------\n")
+          # print('2')
+          # print(Counter(est_depth[2].flatten()))
+          # print("-----------------------\n-----------------------\n-----------------------\n-----------------------\n")
+          # print('3')
+          # print(Counter(est_depth[3].flatten()))
           if flip_for_depth:
             est_depth = np.flip(est_depth, axis=2)
             im_batch = np.flip(im_batch, axis=2)

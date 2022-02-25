@@ -339,7 +339,7 @@ class Model(object):
                       obj_mask[:, :, 0], tf.constant(0.5, dtype=tf.float32)))
                   y_max = tf.reduce_max(coords[:, 0])
                   y_min = tf.reduce_min(coords[:, 0])
-                  seg_height = y_max - y_min + 1
+                  seg_height = y_max - y_min
                   f_y = self.intrinsic_mat[i, 0, 1, 1]
                   approx_depth = ((f_y * self.global_scale_var) /
                                   tf.to_float(seg_height))

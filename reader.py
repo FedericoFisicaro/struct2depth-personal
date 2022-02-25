@@ -292,11 +292,6 @@ class DataReader(object):
     with gfile.Open(os.path.join(data_dir, '%s.txt' % split), 'r') as f:
       frames = f.readlines()
       frames = [k.rstrip() for k in frames]
-    
-    print("--------------------------------- \n--------------------------------- \n--------------------------------- \n")
-    print(len(frames))
-    print("\n--------------------------------- \n--------------------------------- \n--------------------------------- \n")
-
     subfolders = [x.split(' ')[0] for x in frames]
     frame_ids = [x.split(' ')[1] for x in frames]
     image_file_list = [
@@ -304,17 +299,22 @@ class DataReader(object):
                      self.file_extension)
         for i in range(len(frames))
     ]
-    if "UMONS" in data_dir or "NYU" in data_dir:
-      segment_file_list = [
-          os.path.join(data_dir, 'blank_seg_image.png')
-          for i in range(len(frames))
-      ]
-    else : 
-      segment_file_list = [
-          os.path.join(data_dir, subfolders[i], frame_ids[i] + '-fseg.' +
-                      self.file_extension)
-          for i in range(len(frames))
-      ]
+    segment_file_list = [
+        os.path.join(data_dir, subfolders[i], frame_ids[i] + '-fseg.' +
+                     self.file_extension)
+        for i in range(len(frames))
+    ]
+    # if "UMONS" in data_dir or "NYU" in data_dir:
+    #   segment_file_list = [
+    #       os.path.join(data_dir, 'blank_seg_image.png')
+    #       for i in range(len(frames))
+    #   ]
+    # else : 
+    #   segment_file_list = [
+    #       os.path.join(data_dir, subfolders[i], frame_ids[i] + '-fseg.' +
+    #                   self.file_extension)
+    #       for i in range(len(frames))
+    #   ]
     cam_file_list = [
         os.path.join(data_dir, subfolders[i], frame_ids[i] + '_cam.txt')
         for i in range(len(frames))
